@@ -1,6 +1,6 @@
 module.exports = {
   "PGNs": [
-    {
+{
         "PGN":252500,
         "Id":"signalKOverN2k",
         "Description":"Signal K Over N2K",
@@ -42,6 +42,14 @@ module.exports = {
             "Signed":false},
           {
             "Order":4,
+            "Id":"sourceid",
+            "Name":"SourceId",
+            "BitLength":128,
+            "BitStart":0,
+            "Type":"ASCII or UNICODE string starting with length and control byte",
+            "Signed":false},
+          {
+            "Order":5,
             "Id":"path",
             "Name":"Path",
             "BitLength":128,
@@ -49,7 +57,7 @@ module.exports = {
             "Type":"ASCII or UNICODE string starting with length and control byte",
             "Signed":false},
           {
-            "Order":5,
+            "Order":6,
             "Id":"value",
             "Name":"Value",
             "BitLength":128,

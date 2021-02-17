@@ -36,6 +36,7 @@ export default function (app: any) {
                 pgn: n2kPgn,
                 fields: {
                   Type: 'update',
+                  SourceId: update.$source,
                   Path: pv.path,
                   Value: pv.value != null ? JSON.stringify(pv.value) : null
                 }
