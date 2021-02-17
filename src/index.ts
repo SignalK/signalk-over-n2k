@@ -22,6 +22,7 @@ export default function (app: any) {
   let onStop: any = []
   let n2kPgn: number
   let n2kOutEvent: string
+  let allowPUT: boolean
 
   function onDelta (delta: any) {
     if (delta.updates) {
@@ -43,7 +44,7 @@ export default function (app: any) {
               }
             })
             .forEach((pgn: any) => {
-              debug('sending %j', pgn)
+              //debug('sending %j', pgn)
               app.emit(n2kOutEvent, pgn)
             })
         }
@@ -51,10 +52,42 @@ export default function (app: any) {
     }
   }
 
+  function putCallBack(res:any) {
+    if ( res.state === 'COMPLETED' && res.statusCode !== 200 ) {
+      app.error('unable to send PUT: ' + JSON.stringify(res))
+    }
+  }
+  
+  function canboatCallback(pgn:any) {
+    const val = pgn.fields.Value === 'null' ? null : JSON.parse(pgn.fields.Value)
+    const context = !pgn.fields.Context ? 'vessels.self' : pgn.fields.Context
+
+    if ( pgn.fields.Type === 'put' ) {
+      if ( !allowPUT ) {
+        app.error('PUTs not allowed')
+      } else {
+        app.putPath(`${context}.${pgn.fields.Path}`, val, putCallBack)
+      }
+    } else if ( pgn.fields.Type === 'meta' ) {
+      app.handleMessage(`signalk-over-n2k.${pgn.src}`, {
+        context,
+        meta: [
+          {
+            path: pgn.fields.Path,
+            value: val
+          }
+        ]
+      })
+    }
+  }
+
   const plugin: Plugin = {
     start: function (props: any) {
       n2kPgn = props.pgn || 252500
-      n2kOutEvent: props.n2kOutEvent || 'nmea2000JsonOut'
+      n2kOutEvent = props.n2kOutEvent || 'nmea2000JsonOut'
+      allowPUT = props.allowPUT
+      
+      canboatMappings.callback = canboatCallback
       app.emitPropertyValue('canboat-custom-pgns', canboatMappings)
       app.emitPropertyValue('pgn-to-signalk', {
         [n2kPgn]: n2kMappings
@@ -101,6 +134,12 @@ export default function (app: any) {
           title: 'NMEA2000 Out Event',
           description: 'The event to emmit to send nmea2000, defaults to nmea2000JsonOut',
           default: 'nmea2000JsonOut'
+        },
+        allowPUT: {
+          type: 'boolean',
+          title: 'Allow PUTs',
+          description: 'Allow PUT requests from the nmea2000 network',
+          default: false
         },
         paths: {
           title: 'Paths to send over n2k',
