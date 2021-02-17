@@ -71,12 +71,14 @@ export default function (app: any) {
     } else if ( pgn.fields.Type === 'meta' ) {
       app.handleMessage(`signalk-over-n2k.${pgn.src}`, {
         context,
-        meta: [
-          {
-            path: pgn.fields.Path,
-            value: val
-          }
-        ]
+        updates: [{
+          meta: [
+            {
+              path: pgn.fields.Path,
+              value: val
+            }
+          ]
+        }]
       })
     }
   }
