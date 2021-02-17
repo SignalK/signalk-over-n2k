@@ -19,7 +19,7 @@ module.exports = {
             "Type":"Lookup table",
             "Signed":false,
             "EnumValues":[
-              {"name":"update","value":"0"},
+              {"name":"value","value":"0"},
               {"name":"meta","value":"1"},
               {"name":"put","value":"2"}]},
           {

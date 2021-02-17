@@ -10,7 +10,7 @@ module.exports = [
       return val === 'null' ? null : JSON.parse(val)
     },
     filter: (n2k) => {
-      return n2k.fields.Type === 'update'
+      return n2k.fields.Type === 'value'
     },
     context: (n2k) => {
       return n2k.fields.Context
