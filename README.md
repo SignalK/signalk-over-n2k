@@ -10,7 +10,7 @@ The canboat pgn looks like this:
      PACKET_FAST,
      15,
      0,
-     {{"Type", 4, RES_LOOKUP, false, ",0=update,1=meta,2=put", ""},
+     {{"Type", 4, RES_LOOKUP, false, ",0=value,1=meta,2=put", ""},
       {"Reserved", 4, RES_BINARY, false, 0, ""},
       {"Context", BYTES(16), RES_STRINGLAU, false, 0, ""},
       {"SourceId", BYTES(16), RES_STRINGLAU, false, 0, ""},
