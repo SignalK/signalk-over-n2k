@@ -13,6 +13,7 @@ The canboat pgn looks like this:
      {{"Type", 4, RES_LOOKUP, false, ",0=update,1=meta,2=put", ""},
       {"Reserved", 4, RES_BINARY, false, 0, ""},
       {"Context", BYTES(16), RES_STRINGLAU, false, 0, ""},
+      {"SourceId", BYTES(16), RES_STRINGLAU, false, 0, ""},
       {"Path", BYTES(16), RES_STRINGLAU, false, 0, ""},
       {"Value", BYTES(16), RES_STRINGLAU, false, 0, ""},
       {0}}}
