@@ -20,7 +20,6 @@ export default function (app: any) {
   const error = app.error
   const debug = app.debug
   let onStop: any = []
-  let n2kPgn: number
   let n2kOutEvent: string
   let allowPUT: boolean
 
@@ -30,13 +29,17 @@ export default function (app: any) {
         if (update.values) {
           update.values
             .map((pv: any) => {
+
               return {
                 prio: 6,
                 src: 3,
                 dst: 255,
-                pgn: n2kPgn,
+                pgn: 126720,
                 fields: {
-                  Type: 'update',
+                  "Manufacturer Code": 999,
+                  "Industry Code": 4,
+                  "Proprietary ID": 1,
+                  "Context": "vessels.self",
                   SourceId: update.$source,
                   Path: pv.path,
                   Value: pv.value != null ? JSON.stringify(pv.value) : null
@@ -44,7 +47,7 @@ export default function (app: any) {
               }
             })
             .forEach((pgn: any) => {
-              //debug('sending %j', pgn)
+              debug('sending %j', pgn)
               app.emit(n2kOutEvent, pgn)
             })
         }
@@ -59,16 +62,16 @@ export default function (app: any) {
   }
   
   function canboatCallback(pgn:any) {
-    const val = pgn.fields.Value === 'null' ? null : JSON.parse(pgn.fields.Value)
+    const val = !pgn.fields.Value || pgn.fields.Value === 'null' ? null : JSON.parse(pgn.fields.Value)
     const context = !pgn.fields.Context ? 'vessels.self' : pgn.fields.Context
-
-    if ( pgn.fields.Type === 'put' ) {
+    
+    if ( pgn.fields['Proprietary ID'] === "Put" ) {
       if ( !allowPUT ) {
         app.error('PUTs not allowed')
       } else {
         app.putPath(`${context}.${pgn.fields.Path}`, val, putCallBack)
       }
-    } else if ( pgn.fields.Type === 'meta' ) {
+    } else if ( pgn.fields['Proprietary ID'] === "Meta" ) {
       app.handleMessage(`signalk-over-n2k.${pgn.src}`, {
         context,
         updates: [{
@@ -85,19 +88,20 @@ export default function (app: any) {
 
   const plugin: Plugin = {
     start: function (props: any) {
-      n2kPgn = props.pgn || 252500
       n2kOutEvent = props.n2kOutEvent || 'nmea2000JsonOut'
       allowPUT = props.allowPUT
       
-      canboatMappings.callback = canboatCallback
+      canboatMappings.PGNs.forEach((mapping:any) => {
+        mapping.callback = canboatCallback
+      })
       app.emitPropertyValue('canboat-custom-pgns', canboatMappings)
       app.emitPropertyValue('pgn-to-signalk', {
-        [n2kPgn]: n2kMappings
+        126720: n2kMappings
       })
 
       if (props.paths) {
         const subscriptions = props.paths.map((pi: any) => {
-          return { path: pi.path }
+          return { path: pi.path, period: 1000 }
         })
 
         app.subscriptionmanager.subscribe(
@@ -125,16 +129,10 @@ export default function (app: any) {
     schema: {
       type: 'object',
       properties: {
-        pgn: {
-          type: 'number',
-          title: 'PGN',
-          description: 'The PGN number to use',
-          default: 252500
-        },
         n2kOutEvent: {
           type: 'string',
           title: 'NMEA2000 Out Event',
-          description: 'The event to emmit to send nmea2000, defaults to nmea2000JsonOut',
+          description: 'The event to emit to send nmea2000, defaults to nmea2000JsonOut',
           default: 'nmea2000JsonOut'
         },
         allowPUT: {

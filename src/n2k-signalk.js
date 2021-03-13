@@ -1,7 +1,6 @@
 
 module.exports = [
   {
-    source: 'Value',
     node: (n2k) => {
       return n2k.fields.Path
     },
@@ -10,7 +9,7 @@ module.exports = [
       return val === 'null' ? null : JSON.parse(val)
     },
     filter: (n2k) => {
-      return n2k.fields.Type === 'value'
+      return n2k.fields['Proprietary ID']  === 'Update'
     },
     context: (n2k) => {
       return n2k.fields.Context
