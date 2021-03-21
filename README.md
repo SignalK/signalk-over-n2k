@@ -38,3 +38,20 @@ The canboat pgns looks like this:
       {0}}}
 
 ```
+
+You can emit `nmea2000JsonOut` to send:
+
+```
+{
+  dst: 255,
+  pgn: 126720,
+  fields: {
+    "Manufacturer Code": "SignalK",
+    "Industry Code": "Marine Industry",
+    "Proprietary ID": "Update",
+    SourceId: 'somesource.0',
+    Path: 'environment.wind.speedApparent',
+    Value: '10'
+  }
+}
+```
