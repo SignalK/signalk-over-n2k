@@ -5,9 +5,11 @@ chai.use(require('chai-json-equal'));
 
 const { FromPgn, pgnToActisenseSerialFormat } = require('@canboat/canboatjs')
 const PropertyValues =  require('@signalk/server-api').PropertyValues
+const N2kMapper = require('@signalk/n2k-signalk').N2kMapper
 
 const canboatMappings = require('../dist/pgns')
 const n2kMappings = require('../dist/n2k-signalk')
+
 
 describe('custom pgns', function () {
 
@@ -19,8 +21,21 @@ describe('custom pgns', function () {
     name: 'canboat-custom-pgns',
     value: canboatMappings
   })
-  
+
+  propertyValues.emitPropertyValue({
+    timestamp: Date.now(),
+    setter: 'customPgns',
+    name: 'pgn-to-signalk',
+    value: {
+      126720: n2kMappings
+    }
+  })
+    
   var fromPgn = new FromPgn({
+    onPropertyValues: propertyValues.onPropertyValues.bind(propertyValues)
+  })
+
+  var n2kMapper = new N2kMapper({
     onPropertyValues: propertyValues.onPropertyValues.bind(propertyValues)
   })
 
@@ -29,6 +44,12 @@ describe('custom pgns', function () {
       let pgn = fromPgn.parseString(input)
       delete pgn.input
       pgn.should.jsonEqual(expected)
+
+      var delta = n2kMapper.toDelta(pgn)
+
+      delta.updates[0].values[0].path.should.equal('environment.wind.speedApparent')
+      delta.updates[0].values[0].value.should.equal(10)
+      
       done()
     } catch ( e ) {
       done(e)

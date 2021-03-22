@@ -26,6 +26,8 @@
   "devDependencies": {
     "@canboat/canboatjs": "^1.20.2",
     "@signalk/github-create-release": "^1.2.1",
+    "@signalk/n2k-signalk": "^2.2.0",
+    "@signalk/signalk-schema": "^1.5.1",
     "@types/node": "^14.14.10",
     "baconjs": "^1.0.1",
     "chai": "^4.1.2",
