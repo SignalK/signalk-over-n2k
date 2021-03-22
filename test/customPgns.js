@@ -21,9 +21,7 @@ describe('custom pgns', function () {
   })
   
   var fromPgn = new FromPgn({
-    onPropertyValues: (name, cb) => {
-      propertyValues.onPropertyValues(name, cb)
-    }
+    onPropertyValues: propertyValues.onPropertyValues.bind(propertyValues)
   })
 
   it(`custom pgn in`, function (done) {

@@ -16,7 +16,9 @@
   ],
   "author": "scott@scottbender.net",
   "license": "Apache-2.0",
-  "dependencies": {},
+  "dependencies": {
+    "@signalk/server-api": "^1.39.0"
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/SignalK/signalk-over-n2k"
@@ -25,6 +27,7 @@
     "@canboat/canboatjs": "^1.20.2",
     "@signalk/github-create-release": "^1.2.1",
     "@types/node": "^14.14.10",
+    "baconjs": "^1.0.1",
     "chai": "^4.1.2",
     "chai-json-equal": "0.0.1",
     "chai-string": "^1.5.0",
