@@ -9,7 +9,8 @@ module.exports = [
       return val === 'null' ? null : JSON.parse(val)
     },
     filter: (n2k) => {
-      return n2k.fields['Proprietary ID']  === 'Update'
+      return n2k.fields["Manufacturer Code"] === "SignalK" &&
+        n2k.fields['Proprietary ID']  === 'Update'
     },
     context: (n2k) => {
       return n2k.fields.Context
